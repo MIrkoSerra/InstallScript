@@ -96,7 +96,9 @@ sudo chown $OE_USER:$OE_USER /var/log/$OE_USER
 #--------------------------------------------------
 echo -e "\n==== Installing ODOO Server ===="
 sudo git clone https://github.com/MIrkoSerra/gestionale /odoo
+cd /odoo/gestionale
 git submodule update --init --recursive
+cd /
 
 echo -e "\n---- Setting permissions on home folder ----"
 sudo chown -R $OE_USER:$OE_USER $OE_HOME/*
@@ -119,9 +121,9 @@ sudo chown $OE_USER:$OE_USER /etc/${OE_CONFIG}.conf
 sudo chmod 640 /etc/${OE_CONFIG}.conf
 
 echo -e "* Create startup file"
-sudo su root -c "echo '#!/bin/sh' >> $OE_HOME_EXT/start.sh"
-sudo su root -c "echo 'sudo -u $OE_USER $OE_HOME_EXT/openerp-server --config=/etc/${OE_CONFIG}.conf' >> $OE_HOME_EXT/start.sh"
-sudo chmod 755 $OE_HOME_EXT/start.sh
+sudo su root -c "echo '#!/bin/sh' >> $OE_USER/start.sh"
+sudo su root -c "echo 'sudo -u $OE_USER $OE_USER/openerp-server --config=/etc/${OE_CONFIG}.conf' >> $OE_USER/start.sh"
+sudo chmod 755 $OE_USER/start.sh
 
 #--------------------------------------------------
 # Adding ODOO as a deamon (initscript)
@@ -142,7 +144,7 @@ cat <<EOF > ~/$OE_CONFIG
 # Description: ODOO Business Applications
 ### END INIT INFO
 PATH=/bin:/sbin:/usr/bin
-DAEMON=$OE_HOME_EXT/odoo-bin
+DAEMON=$OE_USER/gestionale/odoo/odoo-bin
 NAME=$OE_CONFIG
 DESC=$OE_CONFIG
 # Specify the user name (Default: odoo).
