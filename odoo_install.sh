@@ -18,15 +18,11 @@ OE_USER="odoo"
 OE_HOME="/$OE_USER"
 OE_HOME_EXT="/$OE_USER/${OE_USER}-server"
 # The default port where this Odoo instance will run under (provided you use the command -c in the terminal)
-# Set to true if you want to install it, false if you don't need it or have it already installed.
-INSTALL_WKHTMLTOPDF="True"
 # Set the default Odoo port (you still have to use -c /etc/odoo-server.conf for example to use this.)
 OE_PORT="8069"
 # Choose the Odoo version which you want to install. For example: 12.0, 11.0, 10.0 or saas-18. When using 'master' the master version will be installed.
 # IMPORTANT! This script contains extra libraries that are specifically needed for Odoo 12.0
 OE_VERSION="12.0"
-# Set this to True if you want to install the Odoo enterprise version!
-IS_ENTERPRISE="False"
 # set the superadmin password
 OE_SUPERADMIN="admin"
 OE_CONFIG="${OE_USER}-server"
@@ -76,23 +72,20 @@ sudo apt-get install nodejs npm
 sudo npm install -g rtlcss
 
 #--------------------------------------------------
-# Install Wkhtmltopdf if needed
+# Install Wkhtmltopdf
 #--------------------------------------------------
-if [ $INSTALL_WKHTMLTOPDF = "True" ]; then
-  echo -e "\n---- Install wkhtml and place shortcuts on correct place for ODOO 12 ----"
-  #pick up correct one from x64 & x32 versions:
-  if [ "`getconf LONG_BIT`" == "64" ];then
+echo -e "\n---- Install wkhtml and place shortcuts on correct place for ODOO 12 ----"
+#pick up correct one from x64 & x32 versions:
+if [ "`getconf LONG_BIT`" == "64" ];then
       _url=$WKHTMLTOX_X64
-  else
-      _url=$WKHTMLTOX_X32
-  fi
-  sudo wget $_url
-  sudo gdebi --n `basename $_url`
-  sudo ln -s /usr/local/bin/wkhtmltopdf /usr/bin
-  sudo ln -s /usr/local/bin/wkhtmltoimage /usr/bin
 else
-  echo "Wkhtmltopdf isn't installed due to the choice of the user!"
+      _url=$WKHTMLTOX_X32
 fi
+sudo wget $_url
+sudo gdebi --n `basename $_url`
+sudo ln -s /usr/local/bin/wkhtmltopdf /usr/bin
+sudo ln -s /usr/local/bin/wkhtmltoimage /usr/bin
+
 
 echo -e "\n---- Create ODOO system user ----"
 sudo adduser --system --quiet --shell=/bin/bash --home=$OE_HOME --gecos 'ODOO' --group $OE_USER
@@ -109,7 +102,7 @@ sudo chown $OE_USER:$OE_USER /var/log/$OE_USER
 echo -e "\n==== Installing ODOO Server ===="
 sudo git clone https://github.com/MIrkoSerra/gestionale
 git submodule init
-sudo git submodule upgrade
+sudo git submodule upgrade --recursive
 
 echo -e "\n---- Setting permissions on home folder ----"
 sudo chown -R $OE_USER:$OE_USER $OE_HOME/*
@@ -120,9 +113,13 @@ sudo touch /etc/${OE_CONFIG}.conf
 echo -e "* Creating server config file"
 sudo su root -c "printf '[options] \n; This is the password that allows database operations:\n' >> /etc/${OE_CONFIG}.conf"
 sudo su root -c "printf 'admin_passwd = ${OE_SUPERADMIN}\n' >> /etc/${OE_CONFIG}.conf"
+sudo su root -c "printf 'without_demo = WITHOUT_DEMO\n' >> /etc/${OE_CONFIG}.conf"
+sudo su root -c "printf 'db_name = odoo\n' >> /etc/${OE_CONFIG}.conf"
+sudo su root -c "printf 'db_password = odoo\n' >> /etc/${OE_CONFIG}.conf"
+sudo su root -c "printf 'dbfilter = odoo\n' >> /etc/${OE_CONFIG}.conf"
 sudo su root -c "printf 'xmlrpc_port = ${OE_PORT}\n' >> /etc/${OE_CONFIG}.conf"
 sudo su root -c "printf 'logfile = /var/log/${OE_USER}/${OE_CONFIG}.log\n' >> /etc/${OE_CONFIG}.conf"
-sudo su root -c "printf 'addons_path=${OE_HOME}/custom\n' >> /etc/${OE_CONFIG}.conf"
+sudo su root -c "printf 'addons_path = /odoo/${OE_USER}/${OE_CONFIG}/gestionale/gestionale,/odoo/${OE_USER}/${OE_CONFIG}/gestionale/odoo/addons,/odoo/${OE_USER}/${OE_CONFIG}/gestionale/odoo/odoo/addons,/odoo/${OE_USER}/${OE_CONFIG}/gestionale/l10n-italy\n' >> /etc/${OE_CONFIG}.conf"
 
 sudo chown $OE_USER:$OE_USER /etc/${OE_CONFIG}.conf
 sudo chmod 640 /etc/${OE_CONFIG}.conf
