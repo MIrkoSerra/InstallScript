@@ -95,9 +95,8 @@ sudo chown $OE_USER:$OE_USER /var/log/$OE_USER
 # Install ODOO
 #--------------------------------------------------
 echo -e "\n==== Installing ODOO Server ===="
-sudo git clone https://github.com/MIrkoSerra/gestionale
-git submodule init
-sudo git submodule upgrade --recursive
+sudo git clone https://github.com/MIrkoSerra/gestionale /odoo
+git submodule update --init --recursive
 
 echo -e "\n---- Setting permissions on home folder ----"
 sudo chown -R $OE_USER:$OE_USER $OE_HOME/*
