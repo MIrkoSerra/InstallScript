@@ -115,14 +115,14 @@ sudo su root -c "printf 'db_password = odoo\n' >> /etc/${OE_CONFIG}.conf"
 sudo su root -c "printf 'dbfilter = odoo\n' >> /etc/${OE_CONFIG}.conf"
 sudo su root -c "printf 'xmlrpc_port = ${OE_PORT}\n' >> /etc/${OE_CONFIG}.conf"
 sudo su root -c "printf 'logfile = /var/log/${OE_USER}/${OE_CONFIG}.log\n' >> /etc/${OE_CONFIG}.conf"
-sudo su root -c "printf 'addons_path = /odoo/${OE_USER}/${OE_CONFIG}/gestionale/gestionale,/odoo/${OE_USER}/${OE_CONFIG}/gestionale/odoo/addons,/odoo/${OE_USER}/${OE_CONFIG}/gestionale/odoo/odoo/addons,/odoo/${OE_USER}/${OE_CONFIG}/gestionale/l10n-italy\n' >> /etc/${OE_CONFIG}.conf"
+sudo su root -c "printf 'addons_path = /odoo/gestionale,/odoo/odoo/addons,/odoo/odoo/odoo/addons,/odoo/l10n-italy\n' >> /etc/${OE_CONFIG}.conf"
 
 sudo chown $OE_USER:$OE_USER /etc/${OE_CONFIG}.conf
 sudo chmod 640 /etc/${OE_CONFIG}.conf
 
 echo -e "* Create startup file"
 sudo su root -c "echo '#!/bin/sh' >> $OE_USER/start.sh"
-sudo su root -c "echo 'sudo -u $OE_USER $OE_USER/openerp-server --config=/etc/${OE_CONFIG}.conf' >> $OE_USER/start.sh"
+sudo su root -c "echo 'sudo -u $OE_USER /$OE_USER/odoo/odoo-bin --config=/etc/${OE_CONFIG}.conf' >> $OE_USER/start.sh"
 sudo chmod 755 $OE_USER/start.sh
 
 #--------------------------------------------------
@@ -144,7 +144,7 @@ cat <<EOF > ~/$OE_CONFIG
 # Description: ODOO Business Applications
 ### END INIT INFO
 PATH=/bin:/sbin:/usr/bin
-DAEMON=$OE_USER/gestionale/odoo/odoo-bin
+DAEMON=$OE_USER/odoo/odoo-bin
 NAME=$OE_CONFIG
 DESC=$OE_CONFIG
 # Specify the user name (Default: odoo).
