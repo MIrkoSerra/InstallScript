@@ -115,6 +115,7 @@ sudo su root -c "printf 'without_demo = WITHOUT_DEMO\n' >> /etc/${OE_CONFIG}.con
 sudo su root -c "printf 'db_name = odoo\n' >> /etc/${OE_CONFIG}.conf"
 sudo su root -c "printf 'db_password = odoo\n' >> /etc/${OE_CONFIG}.conf"
 sudo su root -c "printf 'dbfilter = odoo\n' >> /etc/${OE_CONFIG}.conf"
+sudo su root -c "printf 'database = odoo\n' >> /etc/${OE_CONFIG}.conf"
 sudo su root -c "printf 'xmlrpc_port = ${OE_PORT}\n' >> /etc/${OE_CONFIG}.conf"
 sudo su root -c "printf 'logfile = /var/log/${OE_USER}/${OE_CONFIG}.log\n' >> /etc/${OE_CONFIG}.conf"
 sudo su root -c "printf 'addons_path = /odoo/gestionale,/odoo/odoo/addons,/odoo/odoo/odoo/addons,/odoo/l10n-italy\n' >> /etc/${OE_CONFIG}.conf"
